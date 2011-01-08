@@ -1,0 +1,368 @@
+Build settings from command line:
+    PLATFORM_NAME = iphonesimulator
+    SDKROOT = /Developer-NonBeta/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk
+
+
+=== BUILD NATIVE TARGET UnitTest OF PROJECT ConferenceConnection WITH CONFIGURATION Debug ===
+Check dependencies
+PhaseScriptExecution "Run Script" build/ConferenceConnection.build/Debug-iphonesimulator/UnitTest.build/Script-D660BBB60FE039A7000E2748.sh
+    cd /Users/skizz/Development/go-iphone/conf_conxn/iPhone
+    /bin/sh -c /Users/skizz/Development/go-iphone/conf_conxn/iPhone/build/ConferenceConnection.build/Debug-iphonesimulator/UnitTest.build/Script-D660BBB60FE039A7000E2748.sh
+
+
+#  Controlling environment variables:
+# GTM_DISABLE_ZOMBIES - 
+#   Set to a non-zero value to turn on zombie checks. You will probably
+#   want to turn this off if you enable leaks.
+GTM_DISABLE_ZOMBIES=${GTM_DISABLE_ZOMBIES:=1}
+
+# GTM_ENABLE_LEAKS -
+#   Set to a non-zero value to turn on the leaks check. You will probably want
+#   to disable zombies, otherwise you will get a lot of false positives.
+
+# GTM_DISABLE_TERMINATION
+#   Set to a non-zero value so that the app doesn't terminate when it's finished
+#   running tests. This is useful when using it with external tools such
+#   as Instruments.
+
+# GTM_LEAKS_SYMBOLS_TO_IGNORE
+#   List of comma separated symbols that leaks should ignore. Mainly to control 
+#   leaks in frameworks you don't have control over. 
+#   Search this file for GTM_LEAKS_SYMBOLS_TO_IGNORE to see examples. 
+#   Please feel free to add other symbols as you find them but make sure to 
+#   reference Radars or other bug systems so we can track them.
+
+# GTM_REMOVE_GCOV_DATA
+#   Before starting the test, remove any *.gcda files for the current run so
+#   you won't get errors when the source file has changed and the data can't
+#   be merged.
+#
+GTM_REMOVE_GCOV_DATA=${GTM_REMOVE_GCOV_DATA:=0}
+
+ScriptDir=$(dirname "$(echo $0 | sed -e "s,^\([^/]\),$(pwd)/\1,")")
+dirname "$(echo $0 | sed -e "s,^\([^/]\),$(pwd)/\1,")"
+echo $0 | sed -e "s,^\([^/]\),$(pwd)/\1,"
+pwd
+ScriptName=$(basename "$0")
+basename "$0"
+ThisScript="${ScriptDir}/${ScriptName}"
+
+GTMXcodeNote() {
+    echo ${ThisScript}:${1}: note: GTM ${2}
+}
+
+if [ "$PLATFORM_NAME" == "iphonesimulator" ]; then
+  # We kill the iPhone simulator because otherwise we run into issues where
+  # the unittests fail becuase the simulator is currently running, and 
+  # at this time the iPhone SDK won't allow two simulators running at the same
+  # time.
+  set +e
+  /usr/bin/killall "iPhone Simulator"
+  set -e
+  
+  if [ $GTM_REMOVE_GCOV_DATA -ne 0 ]; then
+    if [ "${OBJECT_FILE_DIR}-${CURRENT_VARIANT}" != "-" ]; then
+      if [ -d "${OBJECT_FILE_DIR}-${CURRENT_VARIANT}" ]; then
+        GTMXcodeNote ${LINENO} "Removing any .gcda files"
+        (cd "${OBJECT_FILE_DIR}-${CURRENT_VARIANT}" && \
+            find . -type f -name "*.gcda" -print0 | xargs -0 rm -f )
+      fi
+    fi
+  fi
+
+  export DYLD_ROOT_PATH="$SDKROOT"
+  export DYLD_FRAMEWORK_PATH="$CONFIGURATION_BUILD_DIR"
+  export IPHONE_SIMULATOR_ROOT="$SDKROOT"
+  export CFFIXED_USER_HOME="$TEMP_FILES_DIR/iPhone Simulator User Dir"
+  
+  # See http://developer.apple.com/technotes/tn2004/tn2124.html for an 
+  # explanation of these environment variables.
+  
+  export MallocScribble=YES
+  export MallocPreScribble=YES
+  export MallocGuardEdges=YES
+  export MallocStackLogging=YES
+  export NSAutoreleaseFreedObjectCheckEnabled=YES
+
+  # Turn on the mostly undocumented OBJC_DEBUG stuff.
+  export OBJC_DEBUG_FRAGILE_SUPERCLASSES=YES
+  export OBJC_DEBUG_UNLOAD=YES
+  # Turned off due to the amount of false positives from NS classes.
+  # export OBJC_DEBUG_FINALIZERS=YES  
+  export OBJC_DEBUG_NIL_SYNC=YES
+  export OBJC_PRINT_REPLACED_METHODS=YES
+
+  if [ $GTM_DISABLE_ZOMBIES -eq 0 ]; then
+    GTMXcodeNote ${LINENO} "Enabling zombies"
+    export CFZombieLevel=3
+    export NSZombieEnabled=YES
+  fi
+
+  # Cleanup user home and documents directory
+  if [ -d "$CFFIXED_USER_HOME" ]; then
+    rm -rf "$CFFIXED_USER_HOME"
+  fi
+  mkdir "$CFFIXED_USER_HOME"
+  mkdir "$CFFIXED_USER_HOME/Documents"
+
+  # 6251475 iPhone simulator leaks @ CFHTTPCookieStore shutdown if 
+  #         CFFIXED_USER_HOME empty
+  GTM_LEAKS_SYMBOLS_TO_IGNORE="CFHTTPCookieStore"
+  
+  "$TARGET_BUILD_DIR/$EXECUTABLE_PATH" -RegisterForSystemEvents
+else
+  GTMXcodeNote ${LINENO} "Skipping running of unittests for device build."
+fi
+No matching processes belonging to you were found
+rm(9261) malloc: protecting edges
+rm(9261) malloc: recording malloc stacks to disk using standard recorder
+rm(9261) malloc: enabling scribbling to detect mods to free blocks
+rm(9261) malloc: stack logs being written into /tmp/stack-logs.9261.rm.CMIW6t.index
+rm(9261) malloc: stack logs deleted from /tmp/stack-logs.9261.rm.CMIW6t.index
+mkdir(9262) malloc: protecting edges
+mkdir(9262) malloc: recording malloc stacks to disk using standard recorder
+mkdir(9262) malloc: enabling scribbling to detect mods to free blocks
+mkdir(9262) malloc: stack logs being written into /tmp/stack-logs.9262.mkdir.gjyW2H.index
+mkdir(9262) malloc: stack logs deleted from /tmp/stack-logs.9262.mkdir.gjyW2H.index
+mkdir(9263) malloc: protecting edges
+mkdir(9263) malloc: recording malloc stacks to disk using standard recorder
+mkdir(9263) malloc: enabling scribbling to detect mods to free blocks
+mkdir(9263) malloc: stack logs being written into /tmp/stack-logs.9263.mkdir.7v3zDe.index
+mkdir(9263) malloc: stack logs deleted from /tmp/stack-logs.9263.mkdir.7v3zDe.index
+UnitTest(9264) malloc: protecting edges
+UnitTest(9264) malloc: recording malloc stacks to disk using standard recorder
+UnitTest(9264) malloc: enabling scribbling to detect mods to free blocks
+UnitTest(9264) malloc: stack logs being written into /tmp/stack-logs.9264.UnitTest.xsVMCc.index
+objc[9264]: REPLACED: -[NSSet initWithCoder:]  by category NSSet  (IMP was 0x26d1840 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x683d0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSSet encodeWithCoder:]  by category NSSet  (IMP was 0x26d1850 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xd2e70 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSArray isNSArray__]  by category NSKindOfAdditions  (IMP was 0x2634470 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x11a170 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSDictionary isNSDictionary__]  by category NSKindOfAdditions  (IMP was 0x2637a80 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x11a180 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSSet isNSSet__]  by category NSKindOfAdditions  (IMP was 0x266ac50 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x11a190 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSDate isNSDate__]  by category NSKindOfAdditions  (IMP was 0x26674b0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x11a1a0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSObject dealloc]  by category NSObject  (IMP was 0x26d0ea0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x115520 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSObject autorelease]  by category NSObject  (IMP was 0x26d0150 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x115420 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: +[NSObject initialize]  by category NSObject  (IMP was 0x26d0020 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x57020 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSNull initWithCoder:]  by category NSNull  (IMP was 0x26cfff0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xce1f0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSNull encodeWithCoder:]  by category NSNull  (IMP was 0x26d0000 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x1152c0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSException initWithCoder:]  by category NSException  (IMP was 0x26cedc0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xf1c10 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSException encodeWithCoder:]  by category NSException  (IMP was 0x26cedd0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xf1d20 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSDictionary initWithCoder:]  by category NSDictionary  (IMP was 0x26cd1b0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x7d620 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSDictionary encodeWithCoder:]  by category NSDictionary  (IMP was 0x26cd1c0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xcc730 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSDate initWithCoder:]  by category NSDate  (IMP was 0x26cca40 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xbdb50 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSDate encodeWithCoder:]  by category NSDate  (IMP was 0x26cca50 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xcbf60 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSArray initWithCoder:]  by category NSArray  (IMP was 0x26ca7a0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x68ee0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[NSArray encodeWithCoder:]  by category NSArray  (IMP was 0x26ca7b0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0xc9100 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/Foundation.framework/Foundation))
+objc[9264]: REPLACED: -[WebFrame convertNSRangeToDOMRange:]  by category WebPrivate  (IMP was 0x3c289c0 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/WebKit.framework/WebKit), now 0x3c28800 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/WebKit.framework/WebKit))
+objc[9264]: REPLACED: -[WebFrame convertDOMRangeToNSRange:]  by category WebPrivate  (IMP was 0x3c28990 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/WebKit.framework/WebKit), now 0x3c28840 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/WebKit.framework/WebKit))
+objc[9264]: REPLACED: -[DOMNode rangeOfContents]  by category UIWebSelectionAdditions  (IMP was 0x3c5cd70 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/WebKit.framework/WebKit), now 0x59bb8e (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[UIWebDocumentView selectAll]  by category UIWebDocumentViewTextSelecting  (IMP was 0x46a57f (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x5722f4 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[UIWebDocumentView wordContainingCaretSelection]  by category UIWebDocumentViewTextSelecting  (IMP was 0x46ad21 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x570413 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[UIWebDocumentView selectionState]  by category UIWebDocumentViewTextSelecting  (IMP was 0x468b84 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x572893 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[UIWebDocumentView hasSelection]  by category UIWebDocumentViewTextSelecting  (IMP was 0x46a7f8 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x572a0a (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[UIToolbar setBounds:]  by category UIButtonBarPrivate  (IMP was 0x3e1ff5 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x3e1e6d (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[NSString drawInRect:withFont:]  by category UIStringDrawing  (IMP was 0x4cb80a (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x305408 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit))
+objc[9264]: REPLACED: -[ABAccountsAndGroupsViewController dataSource]  by category Internal  (IMP was 0x4742c97 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/AddressBookUI.framework/AddressBookUI), now 0x4742c63 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/AddressBookUI.framework/AddressBookUI))
+objc[9264]: REPLACED: -[NSArray containsObjectIdenticalTo:]  by category CALExtensions  (IMP was 0x268ee50 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation), now 0x4a121c8 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: -[NSString stringByURLQuoting]  by category DAKeychainAdditions  (IMP was 0x547c204 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e4a9d (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: -[NSURL URLWithUsername:]  by category DAKeychainAddition  (IMP was 0x547c022 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e42e1 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: -[NSURL URLWithoutUsername]  by category DAKeychainAddition  (IMP was 0x547bb80 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e49cc (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: -[NSURL uri]  by category DAKeychainAddition  (IMP was 0x547c6c5 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e4b06 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: +[NSURL classicPortForScheme:]  by category DAKeychainAddition  (IMP was 0x547bcac (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e482e (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: +[NSURL URLWithScheme:host:port:uri:]  by category DAKeychainAddition  (IMP was 0x547ba03 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e48b6 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: +[NSURL URLWithDirtyString:]  by category DAKeychainAddition  (IMP was 0x547bc51 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x49e4bc7 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DataAccess.framework/DataAccess))
+objc[9264]: REPLACED: -[NSDictionary boolForKey:]  by category Goodies  (IMP was 0x31c115 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/Frameworks/UIKit.framework/UIKit), now 0x48253ab (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/Message.framework/Message))
+objc[9264]: REPLACED: -[NSObject className]  by category ClassName  (IMP was 0x5481650 (/var/folders/Ks/KsT6Y4QhGoGz+QQXrRrMiE+++TI/-Caches-/com.apple.Xcode.501/CompositeSDKs/iphonesimulator-iPhoneSimulator3.2-avegnuatdjuflyezaripgmryyxnb/System/Library/PrivateFrameworks/DAVKit.framework/DAVKit), now 0x35aa (/Users/skizz/Development/go-iphone/conf_conxn/iPhone/build/Debug-iphonesimulator/UnitTest.app/UnitTest))
+Test Suite '/Users/skizz/Development/go-iphone/conf_conxn/iPhone/build/Debug-iphonesimulator/UnitTest.app' started at 2010-05-20 18:36:53 -0700
+Test Suite 'BaseTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[BaseTest testVarlistToArray]' passed (0.000 seconds).
+Test Suite 'BaseTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 1 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'SessionStatesTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[SessionStatesTest testCreation]' passed (0.000 seconds).
+Test Case '-[SessionStatesTest testHasHappened]' passed (0.000 seconds).
+Test Case '-[SessionStatesTest testOpposite]' passed (0.000 seconds).
+Test Case '-[SessionStatesTest testPersistState]' passed (0.133 seconds).
+Test Case '-[SessionStatesTest testSessionGetState]' passed (0.001 seconds).
+Test Case '-[SessionStatesTest testSessionToggleState]' passed (0.001 seconds).
+Test Case '-[SessionStatesTest testToggleLabel]' passed (0.000 seconds).
+Test Suite 'SessionStatesTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 7 tests, with 0 failures (0 unexpected) in 0.136 (0.136) seconds
+
+Test Suite 'ScheduleParserTest' started at 2010-05-20 18:36:53 -0700
+2010-05-20 18:36:53.180 UnitTest[9264:903] Importing line: (
+    7,
+    "27-Oct-09",
+    "Consumers Are In Control What Have We Learned, And What Do We Do Now?",
+    Keynote,
+    "11:05 AM",
+    "11:45 AM",
+    "Consumer behavior is changing every day, in stark contrast to even 10 years ago.  Our attitudes are shaped by fellow consumers through blogs and social media.  We have a staggering number of product choices. And the channels through which we are and will be engaged are proliferating wildly.  We are consumers and marketers ourselves, and we care deeply about customer experience and how we can help improve it.  Acxiom and HP will explore:\n\n- How does new digital media make the marketer's job more challenging? \n- What can we learn about evolving consumer behavior? \n- Do consumers really care? \n- How do we take technology products like HP's and sell them to consumers in personal ways?  \n- How does continuous multi-channel marketing help bridge these gaps? ",
+    "",
+    "Imperial Ballroom",
+    "",
+    "",
+    Fairmont,
+    "Some Floor",
+    Michael,
+    Darviche,
+    Acxiom,
+    Prasanna,
+    Dhore,
+    "Hewlett-Packard",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+)
+Unknown.m:0: error: -[ScheduleParserTest testShouldParseARowOfSession] : *** -[NSCFArray objectAtIndex:]: index (28) beyond bounds (28)
+Test Case '-[ScheduleParserTest testShouldParseARowOfSession]' failed (0.009 seconds).
+2010-05-20 18:36:53.187 UnitTest[9264:903] Importing line: (
+    7,
+    "27-Oct-09",
+    "Consumers Are In Control What Have We Learned, And What Do We Do Now?",
+    Keynote,
+    "11:05 AM",
+    "11:45 AM",
+    "Consumer behavior is changing every day, in stark contrast to even 10 years ago.  Our attitudes are shaped by fellow consumers through blogs and social media.  We have a staggering number of product choices. And the channels through which we are and will be engaged are proliferating wildly.  We are consumers and marketers ourselves, and we care deeply about customer experience and how we can help improve it.  Acxiom and HP will explore:\n\n- How does new digital media make the marketer's job more challenging? \n- What can we learn about evolving consumer behavior? \n- Do consumers really care? \n- How do we take technology products like HP's and sell them to consumers in personal ways?  \n- How does continuous multi-channel marketing help bridge these gaps? ",
+    "",
+    "Imperial Ballroom",
+    "",
+    "",
+    Fairmont,
+    "Some Floor",
+    Michael,
+    Darviche,
+    Acxiom,
+    Prasanna,
+    Dhore,
+    "Hewlett-Packard",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+)
+Unknown.m:0: error: -[ScheduleParserTest testShouldParseAllFieldsOfASession] : *** -[NSCFArray objectAtIndex:]: index (28) beyond bounds (28)
+Test Case '-[ScheduleParserTest testShouldParseAllFieldsOfASession]' failed (0.008 seconds).
+Test Case '-[ScheduleParserTest testShouldReturnNoRowsForABlankFile]' passed (0.000 seconds).
+Test Suite 'ScheduleParserTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 3 tests, with 2 failures (2 unexpected) in 0.018 (0.018) seconds
+
+Test Suite 'HotSessionsTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[HotSessionsTest testGetHotSessionsFromService]' passed (0.003 seconds).
+Test Suite 'HotSessionsTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 1 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+
+Test Suite 'SenTestCase' started at 2010-05-20 18:36:53 -0700
+Test Suite 'SenTestCase' finished at 2010-05-20 18:36:53 -0700.
+Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+
+Test Suite 'SyncStatusTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[SyncStatusTest testChangeSyncTime]' passed (0.039 seconds).
+Test Case '-[SyncStatusTest testGetInstance]' passed (0.000 seconds).
+Test Suite 'SyncStatusTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 2 tests, with 0 failures (0 unexpected) in 0.039 (0.039) seconds
+
+Test Suite 'AttendanceInfoTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[AttendanceInfoTest testGetYoursSessions]' passed (0.080 seconds).
+Test Case '-[AttendanceInfoTest testPublishAttendanceInfo]' passed (0.058 seconds).
+Test Suite 'AttendanceInfoTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 2 tests, with 0 failures (0 unexpected) in 0.138 (0.138) seconds
+
+Test Suite 'ServiceTest' started at 2010-05-20 18:36:53 -0700
+Test Suite 'ServiceTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+
+Test Suite 'DeviceTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[DeviceTest testShouldKnowDeviceIdentifier]' passed (0.000 seconds).
+Test Suite 'DeviceTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 1 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'ScheduleSyncTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[ScheduleSyncTest testGetVersions]' passed (0.043 seconds).
+Test Suite 'ScheduleSyncTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 1 tests, with 0 failures (0 unexpected) in 0.044 (0.044) seconds
+
+Test Suite 'TwitterFeedParserTest' started at 2010-05-20 18:36:53 -0700
+2010-05-20 18:36:53.438 UnitTest[9264:903] http://search.twitter.com/search.atom?rpp=20&q=%23ITF10
+Test Case '-[TwitterFeedParserTest test_twitterURL_is_search_for_TwitterFeedTypeHashtag]' passed (0.004 seconds).
+2010-05-20 18:36:53.443 UnitTest[9264:903] http://twitter.com/statuses/user_timeline.atom?screen_name=duelin_markers&count=20
+Test Case '-[TwitterFeedParserTest test_twitterURL_is_user_timeline_for_TwitterFeedTypeOfficialMessages]' passed (0.001 seconds).
+Test Suite 'TwitterFeedParserTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 2 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+
+Test Suite 'GTMTestCase' started at 2010-05-20 18:36:53 -0700
+Test Suite 'GTMTestCase' finished at 2010-05-20 18:36:53 -0700.
+Executed 0 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'DateUtilsTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[DateUtilsTest testShouldBuildDateFromString]' passed (0.001 seconds).
+Test Suite 'DateUtilsTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 1 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'SessionSearchTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[SessionSearchTest testFindLastAttendedSessionWithoutFeedback]' passed (0.223 seconds).
+Test Case '-[SessionSearchTest testSearchPresenterByName]' passed (0.152 seconds).
+Test Case '-[SessionSearchTest testSearchTitleNDescription]' passed (0.140 seconds).
+Test Suite 'SessionSearchTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 3 tests, with 0 failures (0 unexpected) in 0.515 (0.515) seconds
+
+Test Suite 'ScheduleImporterTest' started at 2010-05-20 18:36:53 -0700
+2010-05-20 18:36:53.970 UnitTest[9264:903] Importing line: (
+    7,
+    "27-Oct-09",
+    "Consumers Are In Control What Have We Learned, And What Do We Do Now?",
+    Keynote,
+    "11:05 AM",
+    "11:45 AM",
+    "Consumer behavior is changing every day, in stark contrast to even 10 years ago.  Our attitudes are shaped by fellow consumers through blogs and social media.  We have a staggering number of product choices. And the channels through which we are and will be engaged are proliferating wildly.  We are consumers and marketers ourselves, and we care deeply about customer experience and how we can help improve it.  Acxiom and HP will explore:\n\n- How does new digital media make the marketer's job more challenging? \n- What can we learn about evolving consumer behavior? \n- Do consumers really care? \n- How do we take technology products like HP's and sell them to consumers in personal ways?  \n- How does continuous multi-channel marketing help bridge these gaps? ",
+    "",
+    "Imperial Ballroom",
+    "",
+    "",
+    Fairmont,
+    "Some Floor",
+    Michael,
+    Darviche,
+    Acxiom,
+    Prasanna,
+    Dhore,
+    "Hewlett-Packard",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+)
+Unknown.m:0: error: -[ScheduleImporterTest testShouldSaveARowOfSession] : *** -[NSCFArray objectAtIndex:]: index (28) beyond bounds (28)
+Test Case '-[ScheduleImporterTest testShouldSaveARowOfSession]' failed (0.017 seconds).
+Test Suite 'ScheduleImporterTest' finished at 2010-05-20 18:36:53 -0700.
+Executed 1 tests, with 1 failures (1 unexpected) in 0.018 (0.018) seconds
+
+Test Suite 'MessageTest' started at 2010-05-20 18:36:53 -0700
+Test Case '-[MessageTest testCanInitWithTwitterMessage]' passed (0.003 seconds).
+Test Case '-[MessageTest testCanPersist]' passed (0.038 seconds).
+Test Suite 'MessageTest' finished at 2010-05-20 18:36:54 -0700.
+Executed 2 tests, with 0 failures (0 unexpected) in 0.042 (0.042) seconds
+
+Test Suite '/Users/skizz/Development/go-iphone/conf_conxn/iPhone/build/Debug-iphonesimulator/UnitTest.app' finished at 2010-05-20 18:36:54 -0700.
+Executed 27 tests, with 3 failures (3 unexpected) in 1.027 (1.027) seconds
+
+UnitTest(9264,0xa09944e0) malloc: stack logs deleted from /tmp/stack-logs.9264.UnitTest.xsVMCc.index
+delim is , / 44 :-)
+delim is , / 44 :-)
+delim is , / 44 :-)

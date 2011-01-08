@@ -9,6 +9,22 @@ The kitchen sink eases setup of:
 * functional testing using "frank":https://github.com/moredip/Frank
 * "rake":http://rake.rubyforge.org scripts to setup CI and run builds from the command line
 
+h1. XCode
+
+A helper class for running XCode builds and processing the output. It will detect GTM test cases and generate XUnit compatible xml output files.
+
+Checkout the kitchen sink into the root of your project (in the same directory as the XCode project). If you are using git then you can add it as a git submodule:
+
+	git submodule add git://github.com/ketan/iphone-tdd-kitchen-sink.git
+
+Here's how to use the xcode command:
+
+	require 'xcode_helpers/lib/xcode_helpers'
+
+	xcode.run :target => 'MyApp', :configuration => 'Debug', :sdk => 'iphoneos4.2'
+
+If the target runs any tests then XUnit formatted results files will be created in the directory 'build/test_reports/MyApp'.
+
 h1. License
 
 The iPhone TDD Kitchen Sink is MIT Licensed.
