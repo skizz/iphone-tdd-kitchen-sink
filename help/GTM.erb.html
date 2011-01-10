@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>GTM is now installed</title>
+  </head>
+<body>
+  <p>GTM is now downloaded and installed in <%= gtm_dir %>.</p>
+
+  <p>To use GTM:</p>
+  
+  <ul>
+    
+    <li>Open(or create) your project in XCode</li>
+    
+    <li>Create a new target for running unit tests:
+      <ul>
+        <li>Right click on your application target and choose 'Duplicate'<br/>
+          <img src="<%= File.expand_path('../help/images/01-CreateUnitTest.png', __FILE__) %>"/>
+        </li>
+        <li>Right click on the new target and select 'Get Info'</li>
+        <li>Rename the newly created target to (EXISTING_TARGET)UnitTest<br/>
+          <img src="<%= File.expand_path('../help/images/02-RenameTarget.png', __FILE__) %>"/>
+        </li>
+        <li>On the 'Build' tab search for 'Product Name' and set the product name to '(EXISTING_PRODUCT)UnitTest'<br/>
+          <img src="<%= File.expand_path('../help/images/03-SetProductName.png', __FILE__) %>"/>
+        </li>
+        <li>Delete 'main.m' from the Test targets's 'Compile Sources''<br/>
+          <img src="<%= File.expand_path('../help/images/10-DeleteMainFromTestTarget.png', __FILE__) %>"/>
+        </li>
+      </ul>
+    </li>
+    
+    <li>Create a new group to for your test dependencies
+      <ul>
+        <li>Right-click on your project in the 'Groups and Files' sidebar</li>
+        <li>Click 'Add>New Group'</li>
+        <li>Create a top level group 'Vendor'</li>
+        <li>Under 'Vendor' group, create another group called 'Test'<br/>
+          <img src="<%= File.expand_path('../help/images/04-CreateGroups.png', __FILE__) %>"/>
+        </li>
+        <li>Right click on the 'Test' group and choose 'Add>Existing Files...'<br/>
+          <img src="<%= File.expand_path('../help/images/05-AddExistingFiles.png', __FILE__) %>"/>
+        </li>
+        <li>When the file dialog pops up, choose the GTM directory<br/>
+          <img src="<%= File.expand_path('../help/images/06-AddGTMToGroup.png', __FILE__) %>"/>
+        </li>
+        <li>Add the newly created group to the UnitTest target<br/>
+          <img src="<%= File.expand_path('../help/images/07-AddGTMToTarget.png', __FILE__) %>"/>
+        </li>
+      </ul>
+    </li>
+    
+    <li>Wire everything up together
+      <li>Add a new build phase to run our tests<br/>
+        <img src="<%= File.expand_path('../help/images/08-AddNewBuildPhase.png', __FILE__) %>"/>
+      </li>
+      <li>Set the script to 'sh Vendor/Test/GTM/UnitTesting/RunIPhoneUnitTest.sh'<br/>
+        <img src="<%= File.expand_path('../help/images/09-SetScriptPath.png', __FILE__) %>"/>
+      </li>
+    </li>
+    
+    <li>Add the unit tests
+      <li>Create a new Group called 'Tests'</li>
+      <li>Add existing files from the 'Tests/Unit' directory of your project<br/>
+        <img src="<%= File.expand_path('../help/images/12-AddUnitTests.png', __FILE__) %>"/>
+      </li>
+    </li>
+
+    <li>Select the correct target and click 'Build and Run' to launch the tests<br/>
+      <img src="<%= File.expand_path('../help/images/11-RunTests.png', __FILE__) %>"/>
+    </li>
+    
+  </ul>
+</body>
+</html>
