@@ -106,6 +106,9 @@ ERROR
 
     FAILING_TEST.each_line { |line| @collector.line(line) }
     result = REXML::Document.new(IO.read("../tmp/TEST-ScheduleImporterTest.xml"))
+
+    assert [ENV['HOSTNAME'], Socket.gethostname].include?(REXML::XPath.first( result, "//testsuite/@hostname" ).value)
+
     assert_equal "3", REXML::XPath.first( result, "//testsuite/@errors" ).value
     assert_equal "5", REXML::XPath.first( result, "//testsuite/@failures" ).value
     assert_equal "ScheduleImporterTest", REXML::XPath.first( result, "//testsuite/@name" ).value

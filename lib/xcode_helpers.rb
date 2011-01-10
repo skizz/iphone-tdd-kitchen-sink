@@ -2,7 +2,7 @@
 # Licenced under the MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 require 'FileUtils'
-
+require 'socket'
 #
 # Understands lines that are interesting and should be output to the console
 #
@@ -67,8 +67,9 @@ class XUnitTestCollector
   end
   
   def write_xml(tests)
+    hostname = ENV['HOSTNAME'] || Socket.gethostname
     File.open(@output_dir + "/TEST-#{tests[:suite]}.xml", "w") do |f|
-      f.puts %{<testsuite errors="#{tests[:errors]}" failures="#{tests[:failures]}" hostname="UNKNOWN" name="#{tests[:suite]}" tests="#{tests[:total_tests]}" time="#{tests[:suite_duration]}" timestamp="#{tests[:timestamp]}">}
+      f.puts %{<testsuite errors="#{tests[:errors]}" failures="#{tests[:failures]}" hostname="#{hostname}" name="#{tests[:suite]}" tests="#{tests[:total_tests]}" time="#{tests[:suite_duration]}" timestamp="#{tests[:timestamp]}">}
       tests[:tests].each do |test|
         f.puts %{  <testcase classname="#{tests[:suite]}" name="#{test[:test_name]}" time="#{test[:duration]}" >}
         if test[:result] != 'passed'
