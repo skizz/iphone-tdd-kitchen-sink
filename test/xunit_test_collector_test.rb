@@ -71,7 +71,7 @@ ERROR
     FAILING_TEST.each_line { |line| @collector.line(line) }
 
     assert_equal 3, @collector.tests[:tests].size, @collector.tests.inspect
-    assert_equal "-[ScheduleImporterTest testShouldSaveARowOfSession]", @collector.tests[:tests][0][:test_name], @collector.tests.inspect
+    assert_equal "testShouldSaveARowOfSession", @collector.tests[:tests][0][:test_name], @collector.tests.inspect
     assert_equal "failed", @collector.tests[:tests][0][:result], @collector.tests.inspect
     assert_equal "0.636", @collector.tests[:tests][0][:duration], @collector.tests.inspect
     assert_equal error_details.lines.collect, @collector.tests[:tests][0][:output], @collector.tests.inspect
@@ -82,7 +82,7 @@ ERROR
     PASSING_SUITE.each_line { |line| @collector.line(line) }
 
     assert_equal 1, @collector.tests[:tests].size, @collector.tests.inspect
-    assert_equal "-[HotSessionsTest testGetHotSessionsFromService]", @collector.tests[:tests][0][:test_name], @collector.tests.inspect
+    assert_equal "testGetHotSessionsFromService", @collector.tests[:tests][0][:test_name], @collector.tests.inspect
     assert_equal "passed", @collector.tests[:tests][0][:result], @collector.tests.inspect
     assert_equal "0.003", @collector.tests[:tests][0][:duration], @collector.tests.inspect
   end
@@ -113,7 +113,7 @@ ERROR
     assert_equal "2010-05-20 18:36:53 -0700", REXML::XPath.first( result, "//testsuite/@timestamp" ).value
 
     assert_equal "ScheduleImporterTest", REXML::XPath.first( result, "//testsuite/testcase/@classname" ).value
-    assert_equal "-[ScheduleImporterTest testShouldSaveARowOfSession]", REXML::XPath.first( result, "//testsuite/testcase/@name" ).value
+    assert_equal "testShouldSaveARowOfSession", REXML::XPath.first( result, "//testsuite/testcase/@name" ).value
     assert_equal "0.636", REXML::XPath.first( result, "//testsuite/testcase/@time" ).value
 
     assert_equal "Test failed", REXML::XPath.first( result, "//testsuite/testcase/failure/@message" ).value

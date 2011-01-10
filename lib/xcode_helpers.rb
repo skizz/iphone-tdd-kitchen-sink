@@ -57,9 +57,9 @@ class XUnitTestCollector
         :failures => $2 }
       write_xml @tests
       @current_tests = []
-    elsif text =~ /Test Case \'(.*)\' (\w+) \((.*) seconds\)\./
-      result = $2
-      @current_tests << { :test_name => $1, :result => result, :duration => $3, :output => @current_output }
+    elsif text =~ /Test Case \'-\[(.*) (.*)\]' (\w+) \((.*) seconds\)\./
+      result = $3
+      @current_tests << { :test_name => $2, :result => result, :duration => $4, :output => @current_output }
       @current_output = []
     else 
       @current_output << text
