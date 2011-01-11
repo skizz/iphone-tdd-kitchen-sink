@@ -6,7 +6,5 @@ require 'rake/clean'
 
 CLOBBER.include 'tmp'
 
-Dir["#{File.expand_path('..', __FILE__)}/rake/*.rake"].sort.each { |ext| load ext }
-
 desc "default, alias for :test"
 task :default => [:clean, :test]

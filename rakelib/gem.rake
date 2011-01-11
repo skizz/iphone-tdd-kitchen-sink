@@ -39,7 +39,7 @@ namespace :release do
       s.platform          = Gem::Platform::RUBY
       s.summary           = "The The iPhone TDD Kitchen Sink is a set of ruby scripts to quickly be able to setup a testing environment for iPhone applications."
       s.description       = "The The iPhone TDD Kitchen Sink is a set of ruby scripts to quickly be able to setup a testing environment for iPhone applications."
-      s.files             = Dir["{lib,test,rake,help}/*"] + ["#{s.name}.gemspec", "README.textile", 'MIT-LICENSE.txt', "CHANGELOG"]
+      s.files             = Dir["{lib,test,rakelib,help}/*"] + ["#{s.name}.gemspec", "README.textile", 'MIT-LICENSE.txt', "CHANGELOG"]
       s.has_rdoc          = false
       s.extra_rdoc_files  = ["README.textile", "MIT-LICENSE.txt"]
     end
