@@ -29,10 +29,11 @@ namespace :release do
   task :gem => :changelog do
     Rake::Task['release:copyright'].invoke
     files = ['README.textile', 'MIT-LICENSE.txt']
-
+    
+    require File.expand_path('../../lib/version', __FILE__)
     spec = Gem::Specification.new do |s|
       s.name = "iphone-tdd-kitchen-sink"
-      s.version           = "0.1.0"
+      s.version           = IphoneKitchenSink::VERSION
       s.author            = "ThoughtWorks, Inc."
       s.email             = "ketan@thoughtworks.com"
       s.homepage          = "http://github.com/ketan/iphone-tdd-kitchen-sink"
