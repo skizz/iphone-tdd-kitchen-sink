@@ -5,7 +5,15 @@ module IphoneKitchenSink
   # Knows how to run the kitchen sink
   class Application
     def self.run(options)
-      puts options.inspect
+      if options[:rake]
+        ::IphoneKitchenSink::Rakefile.install
+      end
+      if options[:gtm]
+        ::IphoneKitchenSink::GTM.install
+      end
+      if options[:frank]
+        ::IphoneKitchenSink::Frank.install
+      end
     end
   end
 end

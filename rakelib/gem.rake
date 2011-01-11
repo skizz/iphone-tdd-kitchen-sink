@@ -30,19 +30,27 @@ namespace :release do
     Rake::Task['release:copyright'].invoke
     files = ['README.textile', 'MIT-LICENSE.txt']
     
-    require File.expand_path('../../lib/version', __FILE__)
+    require File.expand_path('../../lib/iphone_kitchen_sink', __FILE__)
     spec = Gem::Specification.new do |s|
       s.name = "iphone-tdd-kitchen-sink"
       s.version           = IphoneKitchenSink::VERSION
       s.author            = "ThoughtWorks, Inc."
       s.email             = "ketan@thoughtworks.com"
       s.homepage          = "http://github.com/ketan/iphone-tdd-kitchen-sink"
-      s.platform          = Gem::Platform::RUBY
+      
+      
       s.summary           = "The The iPhone TDD Kitchen Sink is a set of ruby scripts to quickly be able to setup a testing environment for iPhone applications."
       s.description       = "The The iPhone TDD Kitchen Sink is a set of ruby scripts to quickly be able to setup a testing environment for iPhone applications."
-      s.files             = Dir["{lib,test,rakelib,help}/*"] + ["#{s.name}.gemspec", "README.textile", 'MIT-LICENSE.txt', "CHANGELOG"]
-      s.has_rdoc          = false
+      
+      s.platform          = Gem::Platform::RUBY
+      
+      s.files             = Dir["{lib,test,rakelib,help,templates}/**/*.*"] + ["#{s.name}.gemspec", "README.textile", 'MIT-LICENSE.txt', "CHANGELOG"]
       s.extra_rdoc_files  = ["README.textile", "MIT-LICENSE.txt"]
+      
+      s.executables       = ['iphone-tdd-kitchen-sink']
+      s.require_path      = 'lib'
+      
+      s.has_rdoc          = false
     end
     
     File.open("#{spec.name}.gemspec", "w") { |f| f << spec.to_ruby }
