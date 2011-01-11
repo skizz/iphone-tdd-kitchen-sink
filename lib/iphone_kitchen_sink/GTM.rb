@@ -24,6 +24,10 @@ module IphoneKitchenSink
       @svn_base_url = svn_base_url
       @fetcher = fetcher
     end
+    
+    def self.install
+      self.new.install
+    end
   
     # Installs GTM from the +svn_base_url+
     def install
@@ -36,8 +40,9 @@ module IphoneKitchenSink
     
       add_hello_world_test
     
+      images_dir = File.expand_path('../../../help/images/', __FILE__)
       File.open('/tmp/gtm-installed.html', 'w') do |f| 
-        f.puts ERB.new(File.read(File.expand_path('../../help/GTM.erb.html', __FILE__))).result(binding)
+        f.puts ERB.new(File.read(File.expand_path('../../../help/GTM.erb.html', __FILE__))).result(binding)
         `open #{f.path}`
       end
     end
@@ -46,8 +51,8 @@ module IphoneKitchenSink
   
     def add_hello_world_test
       mkdir_p 'Tests/Unit'
-      cp File.expand_path('../../help/TestHelper.h', __FILE__), 'Tests/Unit'
-      cp File.expand_path('../../help/HelloWorldTest.m', __FILE__), 'Tests/Unit'
+      cp File.expand_path('../../../help/TestHelper.h', __FILE__), 'Tests/Unit'
+      cp File.expand_path('../../../help/HelloWorldTest.m', __FILE__), 'Tests/Unit'
     end
   
   end
