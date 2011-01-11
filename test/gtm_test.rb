@@ -13,11 +13,19 @@ module IphoneKitchenSink
       mkdir_p TMP_DIR, :verbose => false
     end
     
-    def test_should_install_frank
-      GTM.install("#{TMP_DIR}/gtm_dir")
+    def test_should_install_gtm
+      GTM.install("#{TMP_DIR}/iphone-project")
       GTM::FILES.each do |f|
-        assert File.exists?("#{TMP_DIR}/gtm_dir/#{f}"), "Could not find file/folder #{f} inside the install location."
-      end      
+        assert File.exists?("#{TMP_DIR}/iphone-project/Vendor/Test/GTM/#{f}"), "Could not find file/folder #{f} inside the install location."
+      end
+
+      assert_equal File.read(File.expand_path('../../templates/HelloWorldTest.m', __FILE__)),
+                   File.read("#{TMP_DIR}/iphone-project/Tests/Unit/HelloWorldTest.m")
+
+      assert_equal File.read(File.expand_path('../../templates/HelloWorldTest.m', __FILE__)),
+                   File.read("#{TMP_DIR}/iphone-project/Tests/Unit/TestHelper.h")
+
+
     end
   end
 end
