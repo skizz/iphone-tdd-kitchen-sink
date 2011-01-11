@@ -2,8 +2,6 @@
 # Licenced under the MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 require 'test_helper'
-
-require 'fileutils'
 require 'rexml/document'
 
 class XUnitTestCollectorTest < Test::Unit::TestCase
