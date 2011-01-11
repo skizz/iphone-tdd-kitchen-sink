@@ -25,13 +25,13 @@ module IphoneKitchenSink
       @fetcher = fetcher
     end
     
-    def self.install
-      self.new.install
+    def self.install(gtm_dir="./Vendor/Test/GTM")
+      self.new.install(gtm_dir)
     end
   
     # Installs GTM from the +svn_base_url+
-    def install
-      gtm_dir = File.expand_path("./Vendor/Test/GTM")
+    def install(gtm_dir="./Vendor/Test/GTM")
+      gtm_dir = File.expand_path(gtm_dir)
       FILES.each do |file|
         file_path = "#{gtm_dir}/#{file}"
         url = "#{@svn_base_url}/#{file}"
